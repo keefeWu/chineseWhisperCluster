@@ -21,19 +21,23 @@ def loadJson(path):
 	file.close()
 	data = json.loads(jsonData)
 	return data
-
 def L2Distance(featureList):
-	# featureList = np.array(featureList)
-	distanceList = np.zeros(shape=(len(featureList), len(featureList )), dtype='float32')
-	for i in range(len(featureList)):
-		feature1 = np.array(featureList[i])
-		distanceListPart = {}
-		log.info('getting distance %d'%i)
-		for j in range(len(featureList)):
-			feature2 = np.array(featureList[j])
-			distance = np.linalg.norm(feature1 - feature2, axis = 0)
-			distanceList[i][j] = distance
-	return distanceList
+    featureListLength = len(featureList)
+    featureList = featureList.reshape(featureListLength, -1)
+    featureLength = featureList.shape[1]
+    print(featureList.shape)
+    featureListTile = np.tile(featureList, featureListLength)
+    print(featureListTile.shape)
+
+    featureListRepeat = featureList.reshape(1,-1)
+    featureListRepeat = np.repeat(featureListRepeat, featureListLength, axis=0)
+    subArray = featureListRepeat - featureListTile
+    subArray = subArray.reshape(featureListLength, featureLength,-1)
+    print(subArray.shape)
+    distanceList = np.linalg.norm(subArray,axis=1)
+    print(distanceList.shape)
+    return distanceList
+
 
 def cosSimilarity(featureList):
 	# featureList = np.array(featureList)
